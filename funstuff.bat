@@ -1,13 +1,18 @@
 @echo off
-set version=0.0.9
+set version=0.1.2
 set beta=false
 set name=User
 set pathadded=false
+set preview=false
+if "%3"=="preview" (set "preview=true"
+if not "%4"=="" (goto %4) else (echo Preview mode cannot be enabled && exit /b)) else (if not "%3"=="" goto %3)
 if "%2"=="" (cd .) ELSE if "%2"=="betasleepbypass" (
 set beta=true
 goto betastart)
 :sleepcheck
 if exist C:\Windows\System32\sleep.exe goto start
+if exist .\FunStuff\sleep.exe (set "path=%path%;%cd%\FunStuff"
+goto start)
 title Error
 echo.
 echo You, referring to %name% do not have SLEEP.EXE
@@ -26,6 +31,7 @@ if %2==%dig1% echo CONGRATULATIONS!!! you completed the scavenger hunt && pause
 
 
 :start
+if %preview%==true exit /b
 if %beta%==true goto betastart
 title Fun Stuff v.%version%
 echo.
@@ -58,7 +64,7 @@ echo Alright, see you next time!
 sleep 0.5s
 echo Press any key to exit...
 pause >NUL
-exit
+exit /b
 
 
 :error
@@ -104,7 +110,7 @@ echo  List of things in this program
 echo =================================
 echo.
 echo 1) File Checker (filechecker)
-echo 2) File Seller (fileseller)
+echo 2) Pass the tuna down! (passthetunadown)
 echo 3) -
 echo 4) -
 echo 5) -
@@ -127,8 +133,8 @@ if errorlevel 7 goto
 if errorlevel 6 goto
 if errorlevel 5 goto
 if errorlevel 4 goto
-if errorlevel 3 goto fileseller
-if errorlevel 2 goto download
+if errorlevel 3 goto 
+if errorlevel 2 goto passthetunadown
 if errorlevel 1 goto filechecker
 goto start
 
@@ -163,7 +169,7 @@ if errorlevel 7 goto
 if errorlevel 6 goto
 if errorlevel 5 goto
 if errorlevel 4 goto
-if errorlever 3 goto
+if errorlevel 3 goto
 if errorlevel 2 goto
 if errorlevel 1 goto
 goto start
@@ -228,56 +234,6 @@ cls
 goto filecheckerno
 
 
-:betadownload
-if not %beta%==true goto start
-cls
-echo.
-echo  Batch downloader
-echo ===============================
-echo.
-if not exist .\FunStuff\Downloads (mkdir .\FunStuff\Downloads
-echo Downloads folder created!)
-sleep 0.5s
-choice /m "Would you like to download a file?"
-if errorlevel 2 goto start
-if errorlevel 1 goto downloadafterask
-:downloadafterask
-echo.
-sleep 0.5s
-echo What file ID would you like to download, as they are all hidden?
-set /p downloadfileid=Type here: 
-goto downloadid%downloadfileid%
-echo The file was not found.
-choice /m "Would you like to try another ID?"
-if errorlevel 2 goto betastart
-if errorlevel 1 goto downloadafterask
-
-
-:downloadidBOOTMENU
-echo FunStuff Boot Menu found!
-echo Downloading...
-echo ^@echo off^ > .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^echo N) Normal^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^echo V) Secret only^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^echo B) Secret beta^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^echo S) Sleep bypass and beta^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^echo D) Secret Dig1 Code^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^choice /n /c NVBSD^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^cd ..^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^cd ..^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^if errorlevel 5 call funstuff.bat secret 6217^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^if errorlevel 4 call funstuff.bat secret betasleepbypass^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^if errorlevel 3 call funstuff.bat secret beta^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^if errorlevel 2 call funstuff.bat secret^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^if errorlevel 1 call funstuff.bat^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^echo Funstuff.bat has quit!^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^pause^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo ^exit /b^ >> .\FunStuff\Downloads\funstuffbootmenu.bat
-echo Downloaded!
-pause
-goto betadownload
-
-
 
 :chatgpt1
 cls
@@ -311,7 +267,7 @@ sleep 2.5s
 echo name.
 sleep 1s
 set /p name=Enter your name: 
-if %name%==dig1 set dig1-2=0011001
+if "%name%"=="dig1" set dig1-2=0011001
 echo.
 echo ALRIGHT get ready!!!!!
 sleep 2s
@@ -464,9 +420,10 @@ REM !!! NO DIG1 PAST THIS POINT !!!
 REM ============================
 
 
-:fileseller
+:betafileseller
+if not %beta%==true goto start
 set /a filesellercash=10
-if exist .\FileSellerSave set /p filesellercash=<.\FileSellerSave
+if exist .\FunStuff\FileSellerSave set /p filesellercash=<.\FunStuff\FileSellerSave
 :filesellerstart
 cls
 echo.
@@ -497,10 +454,10 @@ echo Please create a file containing %filesellermanualrandom1%
 echo using the file name %filesellermanualrandom2%.txt
 echo Press any key after doing that...
 pause >NUL
-if not exist .\%filesellermanualrandom2%.txt goto manualno
+if not exist .\%filesellermanualrandom2%.txt goto filesellermanualno
 echo Found file...
 set /p filesellermanualfilecontent=<.\%filesellermanualrandom2%.txt
-if not %filesellermanualfilecontent%==%filesellermanualrandom1% goto manualno
+if not %filesellermanualfilecontent%==%filesellermanualrandom1% goto filesellermanualno
 echo File verified! Selling file...
 del .\%filesellermanualrandom2%.txt
 echo File selled successfully!
@@ -520,14 +477,15 @@ goto filesellerstart
 
 
 :filesellerexit
+if not %beta%==true goto start
 cls
 echo.
-echo   Wyjscie
+echo   Exit
 echo =========================================
 echo.
 echo Your cash: $%filesellercash%
 echo Your cash will be saved.
-echo %filesellercash% > FileSellerSave
+echo %filesellercash% > .\FunStuff\FileSellerSave
 echo Goodbye!!
 pause
 goto start
@@ -610,10 +568,10 @@ echo   Beta Explorer
 echo ========================
 echo.
 echo T) Tycoon
-echo D) Downloader
+echo F) FileSeller
 echo X) Back
-choice /n /c XTD
-if errorlevel 3 goto betadownload
+choice /n /c XTF
+if errorlevel 3 goto betafileseller
 if errorlevel 2 goto betatycoon
 if errorlevel 1 goto betastart
 goto betastart
@@ -743,3 +701,231 @@ echo Your data will be saved.
 ) > .\FunStuff\TycoonSave.txt
 pause
 goto start
+
+:passthetunadown
+title Pass the tuna down!
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo         /
+echo       /
+echo     /
+echo  ^|/_
+sleep 0.5s
+cls
+echo ^>^<(((*^>
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo         /
+echo       /
+echo     /
+echo  ^|/_
+sleep 0.5s
+cls
+echo   \
+echo   ^>^<(((*^>          ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo         /
+echo       /
+echo     /
+echo  ^|/_
+sleep 0.5s
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo     ^>^<(((*^>       @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo         /
+echo       /
+echo     /
+echo  ^|/_
+sleep 0.5s
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo       ^>^<(((*^>    @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo         /
+echo       /
+echo     /
+echo  ^|/_
+sleep 0.5s
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo        ^>^<(((*^>    @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo         /
+echo       /
+echo     /
+echo  ^|/_
+sleep 0.5s
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo         ^>^<(((*^>Pass the tuna down!
+echo           /
+echo         /
+echo       /
+echo     /
+echo  ^|/_
+sleep 1s
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo        ^>^<(((*^>
+echo         /
+echo       /
+echo     /
+echo  ^|/_
+sleep 0.5s
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo       ^>^<(((*^>
+echo       /
+echo     /
+echo  ^|/_
+sleep 0.5s
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo         /
+echo     ^>^<(((*^>
+echo     /
+echo  ^|/_
+sleep 0.5s
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo         /
+echo       /
+echo   ^>^<(((*^>
+echo  ^|/_
+echo.
+echo (Hold X to quit!)
+sleep 0.5s
+cls
+echo   \
+echo     \              ^|\_____/^|
+echo       \           @         @ 
+echo         \        @   ^^   ^^   @
+echo          _\^|      @   u*u   @
+echo                Pass the tuna down!
+echo           /
+echo         /
+echo       /
+echo     /
+echo ^>^<(((*^>
+echo.
+echo (Hold X to quit!)
+choice /n /c XP /t 1 /d P
+if errorlevel 2 goto passthetunadown
+if errorlevel 1 goto start
+goto passthetunadown
+
+
+
+
+
+
+:needledotbat
+set /a "needledotbatcolorthing=0"
+echo.
+echo NEEDLE.BAT
+echo ==========
+echo.
+echo NEEDLE.BAT yes
+title NEEDLE.BAT yes
+:needledotbatstartkinda
+set "needledotbatthing2=h"
+call :needledotbatthingdo
+set "needledotbatthing2=he"
+call :needledotbatthingdo
+set "needledotbatthing2=hel"
+call :needledotbatthingdo
+set "needledotbatthing2=hell"
+call :needledotbatthingdo
+set "needledotbatthing2=hello"
+call :needledotbatthingdo
+set "needledotbatthing2=hello n"
+call :needledotbatthingdo
+set "needledotbatthing2=hello ne"
+call :needledotbatthingdo
+set "needledotbatthing2=hello nee"
+call :needledotbatthingdo
+set "needledotbatthing2=hello need"
+call :needledotbatthingdo
+set "needledotbatthing2=hello needl"
+call :needledotbatthingdo
+set "needledotbatthing2=hello needle"
+call :needledotbatthingdo
+set "needledotbatthing2=hello needle :"
+call :needledotbatthingdo
+set "needledotbatthing2=hello needle :D"
+call :needledotbatthingdo
+choice /n /m "(Press E to End)" /c EP /t 2 /d P
+if errorlevel 2 goto needledotbatstartkinda
+if errorlevel 1 (color 07
+goto start)
+call :needledotbatstartkinda
+:needledotbatcolorshift
+set /a "needledotbatcolorthing+=1"
+if %needledotbatcolorthing% gtr 9 set needledotbatcolorthing=1
+color %needledotbatcolorthing%
+goto :eof
+:needledotbatthingdo
+cls
+call :needledotbatcolorshift
+echo.
+echo NEEDLE.BAT
+echo ==========
+echo.
+echo NEEDLE.BAT yes
+echo %needledotbatthing2%
+timeout /t 1 /nobreak >NUL
+:eof
